@@ -7,8 +7,19 @@
     <title>Hiya Plane Fight!</title>
   </head>
   <body>
-    <canvas class="game-canvas"></canvas>
+    <main>
+      <div class="game-dash">
+        <div class="health-guage left">
+          <div class="health-bar" id="player-1-health-bar"></div>
+        </div>
+        <div class="timer"></div>
+        <div class="health-guage">
+          <div class="health-bar" id="player-2-health-bar"></div>
+        </div>
+      </div>
 
+      <canvas class="game-canvas"></canvas>
+    </main>
     <script type="module" src="./main.js"></script>
   </body>
 </html>

@@ -2,6 +2,9 @@ const GAME_CANVAS = document.querySelector(".game-canvas");
 const CONTEXT = GAME_CANVAS.getContext("2d");
 const GRAVITY = 0.7;
 
+const PLAYER_1_HEALTH_BAR = document.querySelector("#player-1-health-bar");
+const PLAYER_2_HEALTH_BAR = document.querySelector("#player-2-health-bar");
+
 GAME_CANVAS.width = 1024;
 GAME_CANVAS.height = 576;
 
@@ -30,6 +33,8 @@ class Sprite {
     };
     this.color = color;
     this.isAttacking = false;
+    this.health = 100;
+    this.strength = 20;
   }
 
   draw(canvasContext) {
@@ -162,11 +167,15 @@ function animate() {
   if (player.isAttacking && isRectangleCollision(player, enemy)) {
     player.isAttacking = false;
     console.log("playerAttackingEnemy");
+    enemy.health -= player.strength;
+    PLAYER_2_HEALTH_BAR.style.width = `${enemy.health}%`;
   }
 
   if (enemy.isAttacking && isRectangleCollision(enemy, player)) {
     enemy.isAttacking = false;
     console.log("enemyAttacking");
+    player.health -= enemy.strength;
+    PLAYER_1_HEALTH_BAR.style.width = `${player.health}%`;
   }
 
   window.requestAnimationFrame(animate);
