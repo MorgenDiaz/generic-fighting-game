@@ -4,11 +4,39 @@ const GRAVITY = 0.7;
 
 const PLAYER_1_HEALTH_BAR = document.querySelector("#player-1-health-bar");
 const PLAYER_2_HEALTH_BAR = document.querySelector("#player-2-health-bar");
+const TIMER_TEXT = document.querySelector("#time");
+const GAME_STATUS_TEXT = document.querySelector("#game-status");
 
 GAME_CANVAS.width = 1024;
 GAME_CANVAS.height = 576;
 
 CONTEXT.fillRect(0, 0, GAME_CANVAS.width, GAME_CANVAS.height);
+
+function determineWinner(timerId) {
+  clearInterval(timerInterval);
+
+  if (player.health === enemy.health) {
+    GAME_STATUS_TEXT.textContent = "Tie!";
+  } else if (player.health > enemy.health) {
+    GAME_STATUS_TEXT.textContent = "Player1 Wins!";
+  } else {
+    GAME_STATUS_TEXT.textContent = "Player2 Wins";
+  }
+
+  GAME_STATUS_TEXT.style.display = "block";
+}
+
+let timerInterval = null;
+let timeSeconds = 10;
+
+timerInterval = setInterval(() => {
+  timeSeconds--;
+  TIMER_TEXT.textContent = timeSeconds;
+
+  if (timeSeconds === 0) {
+    determineWinner(timerInterval);
+  }
+}, 1000);
 
 class Sprite {
   constructor({
@@ -178,6 +206,9 @@ function animate() {
     PLAYER_1_HEALTH_BAR.style.width = `${player.health}%`;
   }
 
+  if (!player.health || !enemy.health) {
+    determineWinner(timerInterval);
+  }
   window.requestAnimationFrame(animate);
 }
 

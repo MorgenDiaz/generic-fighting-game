@@ -40,7 +40,30 @@ main {
 
 .timer {
   flex-shrink: 0;
+  display: flex;
   width: 100px;
   height: 100px;
   background-color: red;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer p {
+  font-size: 24px;
+}
+
+.game-status-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.game-status-container h1 {
+  color: white;
+  display: none;
 }
