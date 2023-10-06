@@ -1,6 +1,9 @@
 import { isRectangleCollision } from "./utility.js";
+import GameObject from "./GameObject.js";
 import Sprite from "./Sprite.js";
 import Fighter from "./Fighter.js";
+import Physics2D from "./Physics2D.js";
+import FighterControls from "./FighterControls.js";
 
 const GAME_CANVAS = document.querySelector(".game-canvas");
 const CONTEXT = GAME_CANVAS.getContext("2d");
@@ -21,7 +24,13 @@ const BACKGROUND_SPRITE = new Sprite({
   imageSrc: "./assets/game_background_4.png",
 });
 
-CONTEXT.fillRect(0, 0, GAME_CANVAS.width, GAME_CANVAS.height);
+const BACKGROUND = new GameObject(
+  0,
+  0,
+  GAME_CANVAS.width,
+  GAME_CANVAS.height,
+  BACKGROUND_SPRITE
+);
 
 function determineWinner(timerId) {
   clearInterval(timerInterval);
@@ -50,11 +59,31 @@ timerInterval = setInterval(() => {
 }, 1000);
 
 const playerConfig = {
-  position: { x: 100, y: 100 },
-  velocity: { x: 0, y: 0 },
   attackAreaOffset: { x: 0, y: 0 },
 };
-const player = new Fighter(playerConfig);
+
+const heroSprite = new Sprite({
+  width: 175,
+  height: 175,
+  imageSrc: "./assets/hero/Idle.png",
+  frames: 10,
+  scale: 2,
+});
+
+const player = new GameObject(
+  0,
+  0,
+  100,
+  100,
+  heroSprite,
+  [
+    new Physics2D({ x: 0, y: 0 }, 0.7, GAME_CANVAS.height - 175),
+    new Fighter(playerConfig),
+    new FighterControls(window),
+  ],
+  -100,
+  -100
+);
 
 const enemyConfig = {
   position: { x: 400, y: 100 },
@@ -77,12 +106,14 @@ const fighterMovementSpeed = 5;
 const fighterJumpVelocity = 20;
 
 function animate() {
-  BACKGROUND_SPRITE.update(CONTEXT);
+  CONTEXT.clearRect(0, 0, GAME_CANVAS.width, GAME_CANVAS.height);
+  BACKGROUND.update(CONTEXT);
 
   player.update(CONTEXT, GAME_CANVAS.height, GRAVITY);
-  enemy.update(CONTEXT, GAME_CANVAS.height, GRAVITY);
+  //enemy.update(CONTEXT, GAME_CANVAS.height, GRAVITY);
 
-  player.velocity.x = 0;
+  /*
+  player.gameObject.velocity.x = 0;
 
   if (KEYS.a.pressed && player.lastPressedKey === "a") {
     player.velocity.x = -fighterMovementSpeed;
@@ -118,12 +149,12 @@ function animate() {
 
   if (!player.health || !enemy.health) {
     determineWinner(timerInterval);
-  }
+  }*/
   window.requestAnimationFrame(animate);
 }
 
 animate();
-
+/*
 window.addEventListener("keydown", (event) => {
   if (event.key in KEYS) {
     KEYS[event.key].pressed = true;
@@ -165,4 +196,4 @@ window.addEventListener("keyup", (event) => {
   if (event.key in KEYS) {
     KEYS[event.key].pressed = false;
   }
-});
+});*/

@@ -1,24 +1,9 @@
-export default class Fighter {
-  constructor({
-    position,
-    velocity,
-    color = "red",
-    attackAreaOffset = { x: 0, y: 0 },
-  }) {
-    this.position = position;
-    this.velocity = velocity;
-    this.width = 50;
-    this.height = 150;
+import Behavior from "./Behavior.js";
+export default class Fighter extends Behavior {
+  constructor({ color = "red", attackAreaOffset = { x: 0, y: 0 } }) {
+    super();
     this.lastPressedKey;
-    this.attackArea = {
-      position: {
-        x: position.x + attackAreaOffset.x,
-        y: position.y + attackAreaOffset.y,
-      },
-      width: 100,
-      height: 50,
-      offset: attackAreaOffset,
-    };
+    this.attackAreaOffset = attackAreaOffset;
     this.color = color;
     this.isAttacking = false;
     this.health = 100;
@@ -28,8 +13,8 @@ export default class Fighter {
   draw(canvasContext) {
     canvasContext.fillStyle = this.color;
     canvasContext.fillRect(
-      this.position.x,
-      this.position.y,
+      this.gameObject.x,
+      this.gameObject.y,
       this.width,
       this.height
     );
@@ -45,25 +30,22 @@ export default class Fighter {
     }
   }
 
-  update(canvasContext, canvasHeight, gravity) {
+  update(canvasContext) {
+    this.attackArea = {
+      position: {
+        x: this.gameObject.x + this.attackAreaOffset.x,
+        y: this.gameObject.y + this.attackAreaOffset.y,
+      },
+      offset: this.attackAreaOffset,
+    };
+
     this.draw(canvasContext);
 
-    this.position.x += this.velocity.x;
-    this.position.y += this.velocity.y;
-
-    this.attackArea.position.x = this.position.x + this.attackArea.offset.x;
-    this.attackArea.position.y = this.position.y + this.attackArea.offset.y;
-
-    const spriteBottom = this.position.y + this.height;
-    const isSpriteOnGround = spriteBottom >= canvasHeight - 150;
-
-    if (isSpriteOnGround) {
-      this.velocity.y = 0;
-    } else {
-      this.velocity.y += gravity;
-    }
+    this.attackArea.position.x = this.gameObject.x + this.attackArea.offset.x;
+    this.attackArea.position.y = this.gameObject.y + this.attackArea.offset.y;
   }
   attack() {
+    console.log("attack!");
     this.isAttacking = true;
 
     setTimeout(() => {
