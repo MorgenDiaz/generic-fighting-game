@@ -1,55 +1,40 @@
 import Behavior from "./Behavior.js";
+import Rectangle from "./Rectangle.js";
 export default class Fighter extends Behavior {
-  constructor({ color = "red", attackAreaOffset = { x: 0, y: 0 } }) {
+  constructor({
+    color = "red",
+    attackAreaOffset = { x: 0, y: 0 },
+    attackAreaWidth = 150,
+    attackAreaHeight = 50,
+  }) {
     super();
-    this.lastPressedKey;
     this.attackAreaOffset = attackAreaOffset;
+    this.attackAreaWidth = attackAreaWidth;
+    this.attackAreaHeight = attackAreaHeight;
     this.color = color;
     this.isAttacking = false;
     this.health = 100;
     this.strength = 20;
   }
 
-  draw(canvasContext) {
-    canvasContext.fillStyle = this.color;
-    canvasContext.fillRect(
-      this.gameObject.x,
-      this.gameObject.y,
-      this.width,
-      this.height
-    );
-
-    if (this.isAttacking) {
-      canvasContext.fillStyle = "yellow";
-      canvasContext.fillRect(
-        this.attackArea.position.x,
-        this.attackArea.position.y,
-        this.attackArea.width,
-        this.attackArea.height
-      );
-    }
+  onAttachToGameObject() {
+    this.rectangle = this.gameObject.getComponent(Rectangle);
   }
 
   update(canvasContext) {
-    this.attackArea = {
-      position: {
-        x: this.gameObject.x + this.attackAreaOffset.x,
-        y: this.gameObject.y + this.attackAreaOffset.y,
-      },
-      offset: this.attackAreaOffset,
-    };
-
-    this.draw(canvasContext);
-
-    this.attackArea.position.x = this.gameObject.x + this.attackArea.offset.x;
-    this.attackArea.position.y = this.gameObject.y + this.attackArea.offset.y;
+    this.rectangle.x = this.gameObject.x + this.attackAreaOffset.x;
+    this.rectangle.y = this.gameObject.y + this.attackAreaOffset.y;
+    this.rectangle.width = this.attackAreaWidth;
+    this.rectangle.height = this.attackAreaHeight;
   }
+
   attack() {
     console.log("attack!");
     this.isAttacking = true;
-
+    window.debug = true;
     setTimeout(() => {
       this.isAttacking = false;
+      window.debug = false;
     }, 100);
   }
 }

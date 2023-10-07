@@ -4,6 +4,7 @@ import Sprite from "./Sprite.js";
 import Fighter from "./Fighter.js";
 import Physics2D from "./Physics2D.js";
 import FighterControls from "./FighterControls.js";
+import Rectangle from "./Rectangle.js";
 
 const GAME_CANVAS = document.querySelector(".game-canvas");
 const CONTEXT = GAME_CANVAS.getContext("2d");
@@ -13,6 +14,13 @@ const PLAYER_1_HEALTH_BAR = document.querySelector("#player-1-health-bar");
 const PLAYER_2_HEALTH_BAR = document.querySelector("#player-2-health-bar");
 const TIMER_TEXT = document.querySelector("#time");
 const GAME_STATUS_TEXT = document.querySelector("#game-status");
+
+const COLLIDABLES = [];
+
+function registerCollidable(collidable) {
+  COLLIDABLES.push();
+  console.log("collidable registered!");
+}
 
 GAME_CANVAS.width = 1024;
 GAME_CANVAS.height = 576;
@@ -59,7 +67,7 @@ timerInterval = setInterval(() => {
 }, 1000);
 
 const playerConfig = {
-  attackAreaOffset: { x: 0, y: 0 },
+  attackAreaOffset: { x: 50, y: 0 },
 };
 
 const heroSprite = new Sprite({
@@ -78,6 +86,7 @@ const player = new GameObject(
   heroSprite,
   [
     new Physics2D({ x: 0, y: 0 }, 0.7, GAME_CANVAS.height - 175),
+    new Rectangle(0, 0, 0, 0, true, registerCollidable),
     new Fighter(playerConfig),
     new FighterControls(window),
   ],
