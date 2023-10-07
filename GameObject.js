@@ -49,9 +49,14 @@ export default class GameObject {
     this.draw(gameContext);
   }
 
-  getComponent(componentType) {
+  getComponent(componentType, id) {
     for (const behavior of this.behaviors) {
-      if (behavior instanceof componentType) return behavior;
+      if (id) {
+        if (behavior instanceof componentType && behavior.id === id)
+          return behavior;
+      } else {
+        if (behavior instanceof componentType) return behavior;
+      }
     }
   }
 }

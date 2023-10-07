@@ -18,14 +18,18 @@ export default class Fighter extends Behavior {
   }
 
   onAttachToGameObject() {
-    this.rectangle = this.gameObject.getComponent(Rectangle);
+    this.attackArea = this.gameObject.getComponent(Rectangle, "weapon");
+    this.body = this.gameObject.getComponent(Rectangle, "body");
   }
 
   update(canvasContext) {
-    this.rectangle.x = this.gameObject.x + this.attackAreaOffset.x;
-    this.rectangle.y = this.gameObject.y + this.attackAreaOffset.y;
-    this.rectangle.width = this.attackAreaWidth;
-    this.rectangle.height = this.attackAreaHeight;
+    this.attackArea.x = this.gameObject.x + this.attackAreaOffset.x;
+    this.attackArea.y = this.gameObject.y + this.attackAreaOffset.y;
+    this.attackArea.width = this.attackAreaWidth;
+    this.attackArea.height = this.attackAreaHeight;
+
+    this.body.x = this.gameObject.x;
+    this.body.y = this.gameObject.y;
   }
 
   attack() {

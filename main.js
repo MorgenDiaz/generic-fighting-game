@@ -66,7 +66,7 @@ timerInterval = setInterval(() => {
   }
 }, 1000);
 
-const playerConfig = {
+const player1Config = {
   attackAreaOffset: { x: 50, y: 0 },
 };
 
@@ -78,6 +78,37 @@ const heroSprite = new Sprite({
   scale: 2,
 });
 
+const player1Weapon = new Rectangle(
+  0,
+  0,
+  0,
+  0,
+  true,
+  "player2",
+  registerCollidable
+);
+player1Weapon.id = "weapon";
+
+const player1Body = new Rectangle(
+  0,
+  0,
+  100,
+  100,
+  true,
+  "player2",
+  registerCollidable
+);
+player1Body.id = "body";
+
+const PLAYER_1_CONTROL_MAP = {
+  navigation: {
+    a: FighterControls.ACTIONS.left,
+    d: FighterControls.ACTIONS.right,
+  },
+  jump: "w",
+  attack: "s",
+};
+
 const player = new GameObject(
   0,
   0,
@@ -86,39 +117,85 @@ const player = new GameObject(
   heroSprite,
   [
     new Physics2D({ x: 0, y: 0 }, 0.7, GAME_CANVAS.height - 175),
-    new Rectangle(0, 0, 0, 0, true, registerCollidable),
-    new Fighter(playerConfig),
-    new FighterControls(window),
+    player1Weapon,
+    player1Body,
+    new Fighter(player1Config),
+    new FighterControls(PLAYER_1_CONTROL_MAP),
   ],
   -100,
   -100
 );
 
-const enemyConfig = {
-  position: { x: 400, y: 100 },
-  velocity: { x: 0, y: 0 },
-  color: "orange",
+// PLAYER 2 CONSTRUCTION
+
+const player2Config = {
   attackAreaOffset: { x: -50, y: 0 },
 };
-const enemy = new Fighter(enemyConfig);
 
-const KEYS = {
-  a: { pressed: false },
-  d: { pressed: false },
-  w: { pressed: false },
-  ArrowLeft: { pressed: false },
-  ArrowUp: { pressed: false },
-  ArrowRight: { pressed: false },
+const kenjiSprite = new Sprite({
+  width: 175,
+  height: 175,
+  imageSrc: "./assets/kenji/Idle.png",
+  frames: 4,
+  scale: 3,
+  animationSlowFactor: 15,
+});
+
+const player2Weapon = new Rectangle(
+  0,
+  0,
+  0,
+  0,
+  true,
+  "player1",
+  registerCollidable
+);
+player2Weapon.id = "weapon";
+
+const player2Body = new Rectangle(
+  0,
+  0,
+  100,
+  100,
+  true,
+  "player1",
+  registerCollidable
+);
+
+player2Body.id = "body";
+
+const PLAYER_2_CONTROL_MAP = {
+  navigation: {
+    ArrowLeft: FighterControls.ACTIONS.left,
+    ArrowRight: FighterControls.ACTIONS.right,
+  },
+  jump: "ArrowUp",
+  attack: "ArrowDown",
 };
 
-const fighterMovementSpeed = 5;
-const fighterJumpVelocity = 20;
+const player2 = new GameObject(
+  400,
+  0,
+  100,
+  100,
+  kenjiSprite,
+  [
+    new Physics2D({ x: 0, y: 0 }, 0.7, GAME_CANVAS.height - 175),
+    player2Weapon,
+    player2Body,
+    new Fighter(player2Config),
+    new FighterControls(PLAYER_2_CONTROL_MAP),
+  ],
+  -190,
+  -200
+);
 
 function animate() {
   CONTEXT.clearRect(0, 0, GAME_CANVAS.width, GAME_CANVAS.height);
   BACKGROUND.update(CONTEXT);
 
-  player.update(CONTEXT, GAME_CANVAS.height, GRAVITY);
+  player.update(CONTEXT);
+  player2.update(CONTEXT);
   //enemy.update(CONTEXT, GAME_CANVAS.height, GRAVITY);
 
   /*
@@ -163,46 +240,3 @@ function animate() {
 }
 
 animate();
-/*
-window.addEventListener("keydown", (event) => {
-  if (event.key in KEYS) {
-    KEYS[event.key].pressed = true;
-  }
-
-  switch (event.key) {
-    case "a":
-      player.lastPressedKey = event.key;
-      break;
-    case "w":
-      player.velocity.y = -fighterJumpVelocity;
-      break;
-    case "s":
-      player.attack();
-      break;
-    case "d":
-      player.lastPressedKey = event.key;
-      break;
-    case "ArrowLeft":
-      enemy.lastPressedKey = event.key;
-      break;
-    case "ArrowUp":
-      enemy.velocity.y = -fighterJumpVelocity;
-      break;
-    case "ArrowDown":
-      enemy.attack();
-      break;
-    case "ArrowRight":
-      enemy.lastPressedKey = event.key;
-      break;
-    default:
-      if (event.key in KEYS) {
-        KEYS.lastPressed = event.key;
-      }
-  }
-});
-
-window.addEventListener("keyup", (event) => {
-  if (event.key in KEYS) {
-    KEYS[event.key].pressed = false;
-  }
-});*/
