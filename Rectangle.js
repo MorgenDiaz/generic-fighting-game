@@ -10,7 +10,7 @@ export default class Rectangle extends Behavior {
     width,
     height,
     isCollidable = false,
-    collissionLayer,
+    collisionLayer,
     registerCollidable
   ) {
     super();
@@ -19,7 +19,7 @@ export default class Rectangle extends Behavior {
     this.width = width;
     this.height = height;
     this.isCollidable = isCollidable;
-    this.collissionLayer = collissionLayer;
+    this.collisionLayer = collisionLayer;
     this.registerCollidable = registerCollidable;
     this.bounderies = {
       top: this.y,
@@ -30,7 +30,10 @@ export default class Rectangle extends Behavior {
   }
 
   onAttachToGameObject() {
-    this.registerCollidable(this);
+    this.registerCollidable({
+      gameObject: this.gameObject,
+      collidableId: this.id,
+    });
   }
 
   debug(gameCanvas) {
@@ -57,7 +60,7 @@ export default class Rectangle extends Behavior {
 
   emitCollisionEvent(collidable) {
     this.COLLISION_OBSERVERS.forEach((observer) => {
-      observer.onCollision(collidable);
+      observer(collidable);
     });
   }
 }

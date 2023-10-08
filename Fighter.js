@@ -17,9 +17,20 @@ export default class Fighter extends Behavior {
     this.strength = 20;
   }
 
+  dealDamage = (collisionGameObject) => {
+    if (this.isAttacking) {
+      console.log("dealing damage");
+      const enemy = collisionGameObject.getComponent(Fighter);
+      enemy.health -= this.strength;
+      console.log(`health is now ${enemy.health}`);
+      this.isAttacking = false;
+    }
+  };
+
   onAttachToGameObject() {
     this.attackArea = this.gameObject.getComponent(Rectangle, "weapon");
     this.body = this.gameObject.getComponent(Rectangle, "body");
+    this.attackArea.registerCollisionObserver(this.dealDamage);
   }
 
   update(canvasContext) {

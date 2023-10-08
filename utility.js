@@ -1,19 +1,15 @@
 export function isRectangleCollision(rectangleA, rectangleB) {
   let isRectangleALeftOfRectangleB =
-    rectangleA.attackArea.position.x <=
-    rectangleB.position.x + rectangleB.width;
+    rectangleA.x <= rectangleB.x + rectangleB.width;
 
   let isRectangleARightOfRectangleB =
-    rectangleA.attackArea.position.x + rectangleA.attackArea.width >=
-    rectangleB.position.x;
+    rectangleA.x + rectangleA.width >= rectangleB.x;
 
   let isRectangleABelowRectangleB =
-    rectangleA.attackArea.position.y + rectangleA.attackArea.height >=
-    rectangleB.position.y;
+    rectangleA.y + rectangleA.height >= rectangleB.y;
 
   let isRectangleAAboveRectangleB =
-    rectangleA.attackArea.position.y <=
-    rectangleB.position.y + rectangleB.height;
+    rectangleA.y <= rectangleB.y + rectangleB.height;
 
   return (
     isRectangleALeftOfRectangleB &&

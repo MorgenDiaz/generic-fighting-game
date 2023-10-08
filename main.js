@@ -18,7 +18,7 @@ const GAME_STATUS_TEXT = document.querySelector("#game-status");
 const COLLIDABLES = [];
 
 function registerCollidable(collidable) {
-  COLLIDABLES.push();
+  COLLIDABLES.push(collidable);
   console.log("collidable registered!");
 }
 
@@ -40,12 +40,38 @@ const BACKGROUND = new GameObject(
   BACKGROUND_SPRITE
 );
 
+function detectCollisions() {
+  for (let i = 0; i < COLLIDABLES.length; i++) {
+    const { gameObject: gameObject1, collidableId: collidableId1 } =
+      COLLIDABLES[i];
+    const collidable1 = gameObject1.getComponent(Rectangle, collidableId1);
+
+    for (let j = 1; j < COLLIDABLES.length; j++) {
+      const { gameObject: gameObject2, collidableId: collidableId2 } =
+        COLLIDABLES[j];
+      const collidable2 = gameObject2.getComponent(Rectangle, collidableId2);
+
+      if (isRectangleCollision(collidable1, collidable2)) {
+        if (
+          (collidable1.collisionLayer === "player1" &&
+            collidable2.collisionLayer === "player2") ||
+          (collidable1.collisionLayer === "player2" &&
+            collidable2.collisionLayer === "player1")
+        ) {
+          collidable1.emitCollisionEvent(gameObject2);
+          collidable2.emitCollisionEvent(gameObject1);
+        }
+      }
+    }
+  }
+}
+
 function determineWinner(timerId) {
   clearInterval(timerInterval);
 
-  if (player.health === enemy.health) {
+  if (player1.health === player2.health) {
     GAME_STATUS_TEXT.textContent = "Tie!";
-  } else if (player.health > enemy.health) {
+  } else if (player1.health > player2.health) {
     GAME_STATUS_TEXT.textContent = "Player1 Wins!";
   } else {
     GAME_STATUS_TEXT.textContent = "Player2 Wins";
@@ -84,7 +110,7 @@ const player1Weapon = new Rectangle(
   0,
   0,
   true,
-  "player2",
+  "player1",
   registerCollidable
 );
 player1Weapon.id = "weapon";
@@ -95,7 +121,7 @@ const player1Body = new Rectangle(
   100,
   100,
   true,
-  "player2",
+  "player1",
   registerCollidable
 );
 player1Body.id = "body";
@@ -109,7 +135,7 @@ const PLAYER_1_CONTROL_MAP = {
   attack: "s",
 };
 
-const player = new GameObject(
+const player1 = new GameObject(
   0,
   0,
   100,
@@ -147,7 +173,7 @@ const player2Weapon = new Rectangle(
   0,
   0,
   true,
-  "player1",
+  "player2",
   registerCollidable
 );
 player2Weapon.id = "weapon";
@@ -158,7 +184,7 @@ const player2Body = new Rectangle(
   100,
   100,
   true,
-  "player1",
+  "player2",
   registerCollidable
 );
 
@@ -194,48 +220,17 @@ function animate() {
   CONTEXT.clearRect(0, 0, GAME_CANVAS.width, GAME_CANVAS.height);
   BACKGROUND.update(CONTEXT);
 
-  player.update(CONTEXT);
+  player1.update(CONTEXT);
   player2.update(CONTEXT);
-  //enemy.update(CONTEXT, GAME_CANVAS.height, GRAVITY);
 
-  /*
-  player.gameObject.velocity.x = 0;
+  detectCollisions();
 
-  if (KEYS.a.pressed && player.lastPressedKey === "a") {
-    player.velocity.x = -fighterMovementSpeed;
-  } else if (KEYS.d.pressed && player.lastPressedKey === "d") {
-    player.velocity.x = fighterMovementSpeed;
-  }
+  const player1Health = player1.getComponent(Fighter).health;
+  const player2Health = player2.getComponent(Fighter).health;
 
-  if (KEYS.w.pressed) {
-    KEYS.w.pressed = false;
-  }
+  PLAYER_1_HEALTH_BAR.style.width = `${player1Health}%`;
+  PLAYER_2_HEALTH_BAR.style.width = `${player2Health}%`;
 
-  enemy.velocity.x = 0;
-
-  if (KEYS.ArrowLeft.pressed && enemy.lastPressedKey === "ArrowLeft") {
-    enemy.velocity.x = -fighterMovementSpeed;
-  } else if (KEYS.ArrowRight.pressed && enemy.lastPressedKey === "ArrowRight") {
-    enemy.velocity.x = fighterMovementSpeed;
-  }
-
-  if (player.isAttacking && isRectangleCollision(player, enemy)) {
-    player.isAttacking = false;
-    console.log("playerAttackingEnemy");
-    enemy.health -= player.strength;
-    PLAYER_2_HEALTH_BAR.style.width = `${enemy.health}%`;
-  }
-
-  if (enemy.isAttacking && isRectangleCollision(enemy, player)) {
-    enemy.isAttacking = false;
-    console.log("enemyAttacking");
-    player.health -= enemy.strength;
-    PLAYER_1_HEALTH_BAR.style.width = `${player.health}%`;
-  }
-
-  if (!player.health || !enemy.health) {
-    determineWinner(timerInterval);
-  }*/
   window.requestAnimationFrame(animate);
 }
 
