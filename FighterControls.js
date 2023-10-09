@@ -19,9 +19,7 @@ export default class FighterControls extends Behavior {
 
   update(gameContext) {
     this.physics2D.velocity.x = 0;
-    if (this.testy) {
-      this.testy = false;
-    }
+
     if (
       this.activeActions.has(FighterControls.ACTIONS.left) &&
       this.lastAction === FighterControls.ACTIONS.left

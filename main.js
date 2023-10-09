@@ -5,6 +5,7 @@ import Fighter from "./Fighter.js";
 import Physics2D from "./Physics2D.js";
 import FighterControls from "./FighterControls.js";
 import Rectangle from "./Rectangle.js";
+import AnimationController from "./AnimationController.js";
 
 const GAME_CANVAS = document.querySelector(".game-canvas");
 const CONTEXT = GAME_CANVAS.getContext("2d");
@@ -16,10 +17,10 @@ const TIMER_TEXT = document.querySelector("#time");
 const GAME_STATUS_TEXT = document.querySelector("#game-status");
 
 const COLLIDABLES = [];
+const ACTIVE_COLLISIONS = new Set();
 
 function registerCollidable(collidable) {
   COLLIDABLES.push(collidable);
-  console.log("collidable registered!");
 }
 
 GAME_CANVAS.width = 1024;
@@ -42,24 +43,39 @@ const BACKGROUND = new GameObject(
 
 function detectCollisions() {
   for (let i = 0; i < COLLIDABLES.length; i++) {
-    const { gameObject: gameObject1, collidableId: collidableId1 } =
-      COLLIDABLES[i];
-    const collidable1 = gameObject1.getComponent(Rectangle, collidableId1);
+    const {
+      gameObject: gameObject1,
+      collidableId: collidableId1,
+      collidableName: collidableName1,
+    } = COLLIDABLES[i];
+    const collidable1 = gameObject1.getComponent(Rectangle, collidableName1);
 
     for (let j = 1; j < COLLIDABLES.length; j++) {
-      const { gameObject: gameObject2, collidableId: collidableId2 } =
-        COLLIDABLES[j];
-      const collidable2 = gameObject2.getComponent(Rectangle, collidableId2);
+      const {
+        gameObject: gameObject2,
+        collidableId: collidableId2,
+        collidableName: collidableName2,
+      } = COLLIDABLES[j];
+      const collidable2 = gameObject2.getComponent(Rectangle, collidableName2);
+
+      const collisionId = `${collidableId1}:${collidableId2}`;
 
       if (isRectangleCollision(collidable1, collidable2)) {
         if (
-          (collidable1.collisionLayer === "player1" &&
+          (collidable1.collisionLayer === "player1_weapon" &&
             collidable2.collisionLayer === "player2") ||
-          (collidable1.collisionLayer === "player2" &&
+          (collidable1.collisionLayer === "player2_weapon" &&
             collidable2.collisionLayer === "player1")
         ) {
-          collidable1.emitCollisionEvent(gameObject2);
-          collidable2.emitCollisionEvent(gameObject1);
+          ACTIVE_COLLISIONS.add(collisionId);
+          collidable1.emitCollisionEnterEvent(gameObject2);
+          collidable2.emitCollisionEnterEvent(gameObject1);
+        }
+      } else {
+        if (ACTIVE_COLLISIONS.has(collisionId)) {
+          ACTIVE_COLLISIONS.delete(collisionId);
+          collidable1.emitCollisionExitEvent(gameObject2);
+          collidable2.emitCollisionExitEvent(gameObject1);
         }
       }
     }
@@ -96,7 +112,9 @@ const player1Config = {
   attackAreaOffset: { x: 50, y: 0 },
 };
 
-const heroSprite = new Sprite({
+const fighter1 = new Fighter(player1Config);
+
+const heroIdleSprite = new Sprite({
   width: 175,
   height: 175,
   imageSrc: "./assets/hero/Idle.png",
@@ -104,16 +122,49 @@ const heroSprite = new Sprite({
   scale: 2,
 });
 
+const heroRunSprite = new Sprite({
+  width: 175,
+  height: 175,
+  imageSrc: "./assets/hero/Run.png",
+  frames: 8,
+  scale: 2,
+});
+
+const heroJumpSprite = new Sprite({
+  width: 175,
+  height: 175,
+  imageSrc: "./assets/hero/Jump.png",
+  frames: 3,
+  scale: 2,
+});
+
+const heroAttackSprite1 = new Sprite({
+  width: 175,
+  height: 175,
+  imageSrc: "./assets/hero/Attack1.png",
+  frames: 7,
+  scale: 2,
+});
+
+const heroAnimationController = new AnimationController();
+heroAnimationController.addSpriteForState("idle", heroIdleSprite);
+heroAnimationController.addSpriteForState("run", heroRunSprite);
+heroAnimationController.addSpriteForState("up", heroJumpSprite);
+heroAnimationController.addSpriteForState("attack1", heroAttackSprite1);
+
+heroAnimationController.addAnimationAction("attack1", 3, fighter1.dealDamage);
+heroAnimationController.addAnimationAction("attack1", 6, fighter1.endAttack);
+
 const player1Weapon = new Rectangle(
   0,
   0,
   0,
   0,
   true,
-  "player1",
+  "player1_weapon",
   registerCollidable
 );
-player1Weapon.id = "weapon";
+player1Weapon.name = "weapon";
 
 const player1Body = new Rectangle(
   0,
@@ -124,7 +175,7 @@ const player1Body = new Rectangle(
   "player1",
   registerCollidable
 );
-player1Body.id = "body";
+player1Body.name = "body";
 
 const PLAYER_1_CONTROL_MAP = {
   navigation: {
@@ -136,16 +187,17 @@ const PLAYER_1_CONTROL_MAP = {
 };
 
 const player1 = new GameObject(
-  0,
+  200,
   0,
   100,
   100,
-  heroSprite,
+  null,
   [
+    heroAnimationController,
     new Physics2D({ x: 0, y: 0 }, 0.7, GAME_CANVAS.height - 175),
     player1Weapon,
     player1Body,
-    new Fighter(player1Config),
+    fighter1,
     new FighterControls(PLAYER_1_CONTROL_MAP),
   ],
   -100,
@@ -155,10 +207,13 @@ const player1 = new GameObject(
 // PLAYER 2 CONSTRUCTION
 
 const player2Config = {
-  attackAreaOffset: { x: -50, y: 0 },
+  direction: "left",
+  attackAreaOffset: { x: -100, y: 0 },
 };
 
-const kenjiSprite = new Sprite({
+const fighter2 = new Fighter(player2Config);
+
+const kenjiIdleSprite = new Sprite({
   width: 175,
   height: 175,
   imageSrc: "./assets/kenji/Idle.png",
@@ -167,16 +222,51 @@ const kenjiSprite = new Sprite({
   animationSlowFactor: 15,
 });
 
+const kenjiRunSprite = new Sprite({
+  width: 175,
+  height: 175,
+  imageSrc: "./assets/kenji/Run.png",
+  frames: 8,
+  scale: 3,
+  animationSlowFactor: 15,
+});
+
+const kenjiJumpSprite = new Sprite({
+  width: 175,
+  height: 175,
+  imageSrc: "./assets/kenji/Jump.png",
+  frames: 2,
+  scale: 3,
+  animationSlowFactor: 15,
+});
+
+const kenjiAttackSprite1 = new Sprite({
+  width: 175,
+  height: 175,
+  imageSrc: "./assets/kenji/Attack1.png",
+  frames: 4,
+  scale: 3,
+});
+
+const kenjiAnimationController = new AnimationController();
+kenjiAnimationController.addSpriteForState("idle", kenjiIdleSprite);
+kenjiAnimationController.addSpriteForState("run", kenjiRunSprite);
+kenjiAnimationController.addSpriteForState("up", kenjiJumpSprite);
+kenjiAnimationController.addSpriteForState("attack1", kenjiAttackSprite1);
+
+kenjiAnimationController.addAnimationAction("attack1", 1, fighter2.dealDamage);
+kenjiAnimationController.addAnimationAction("attack1", 3, fighter2.endAttack);
+
 const player2Weapon = new Rectangle(
   0,
   0,
   0,
   0,
   true,
-  "player2",
+  "player2_weapon",
   registerCollidable
 );
-player2Weapon.id = "weapon";
+player2Weapon.name = "weapon";
 
 const player2Body = new Rectangle(
   0,
@@ -188,7 +278,7 @@ const player2Body = new Rectangle(
   registerCollidable
 );
 
-player2Body.id = "body";
+player2Body.name = "body";
 
 const PLAYER_2_CONTROL_MAP = {
   navigation: {
@@ -204,12 +294,13 @@ const player2 = new GameObject(
   0,
   100,
   100,
-  kenjiSprite,
+  null,
   [
     new Physics2D({ x: 0, y: 0 }, 0.7, GAME_CANVAS.height - 175),
+    kenjiAnimationController,
     player2Weapon,
     player2Body,
-    new Fighter(player2Config),
+    fighter2,
     new FighterControls(PLAYER_2_CONTROL_MAP),
   ],
   -190,

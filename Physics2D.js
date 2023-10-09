@@ -8,10 +8,11 @@ export default class Physics2D extends Behavior {
     this.velocity = velocity;
     this.gravity = gravity;
     this.groundY = groundY;
+    this.isObjectOnGround = false;
   }
 
   update(gameContext) {
-    const isObjectOnGround = this.gameObject.bounderies.bottom >= this.groundY;
+    this.isObjectOnGround = this.gameObject.bounderies.bottom >= this.groundY;
 
     this.gameObject.x += this.velocity.x;
 
@@ -24,7 +25,7 @@ export default class Physics2D extends Behavior {
     } else {
       this.gameObject.y += this.velocity.y;
     }
-    if (isObjectOnGround) {
+    if (this.isObjectOnGround) {
       if (this.velocity.y > EPSILON) {
         this.gameObject.y -= 1;
         this.velocity.y = 0;

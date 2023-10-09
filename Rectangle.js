@@ -2,7 +2,8 @@ import Behavior from "./Behavior.js";
 import GameObject from "./GameObject.js";
 
 export default class Rectangle extends Behavior {
-  COLLISION_OBSERVERS = [];
+  COLLISION_ENTER_OBSERVERS = [];
+  COLLISION_EXIT_OBSERVERS = [];
 
   constructor(
     x,
@@ -14,6 +15,7 @@ export default class Rectangle extends Behavior {
     registerCollidable
   ) {
     super();
+    this.id = Math.random().toString(36).slice(2, 9);
     this.x = x;
     this.y = y;
     this.width = width;
@@ -33,6 +35,7 @@ export default class Rectangle extends Behavior {
     this.registerCollidable({
       gameObject: this.gameObject,
       collidableId: this.id,
+      collidableName: this.name,
     });
   }
 
@@ -54,12 +57,22 @@ export default class Rectangle extends Behavior {
     }
   }
 
-  registerCollisionObserver(observer) {
-    this.COLLISION_OBSERVERS.push(observer);
+  registerCollisionEnterObserver(observer) {
+    this.COLLISION_ENTER_OBSERVERS.push(observer);
   }
 
-  emitCollisionEvent(collidable) {
-    this.COLLISION_OBSERVERS.forEach((observer) => {
+  registerCollisionExitObserver(observer) {
+    this.COLLISION_EXIT_OBSERVERS.push(observer);
+  }
+
+  emitCollisionEnterEvent(collidable) {
+    this.COLLISION_ENTER_OBSERVERS.forEach((observer) => {
+      observer(collidable);
+    });
+  }
+
+  emitCollisionExitEvent(collidable) {
+    this.COLLISION_EXIT_OBSERVERS.forEach((observer) => {
       observer(collidable);
     });
   }

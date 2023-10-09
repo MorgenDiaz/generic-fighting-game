@@ -16,6 +16,7 @@ export default class Sprite {
     this.activeFrame = 0;
     this.frame = 0;
     this.animationSlowFactor = animationSlowFactor;
+    this.frameActions = [];
   }
 
   draw(gameContext, x, y) {
@@ -33,12 +34,22 @@ export default class Sprite {
 
     if (this.frames > 1) {
       if (this.frame % this.animationSlowFactor === 0) {
+        for (const frameAction of this.frameActions) {
+          if (frameAction.frame === this.activeFrame) {
+            frameAction.callback();
+          }
+        }
+
         this.activeFrame++;
-        this.activeFrame = this.activeFrame % (this.frames - 1);
+        this.activeFrame = this.activeFrame % this.frames;
         this.frame = 0;
       }
 
       this.frame++;
     }
+  }
+
+  addFrameAction(frame, callback) {
+    this.frameActions.push({ frame, callback });
   }
 }
