@@ -16,6 +16,9 @@ export default class Fighter extends Behavior {
     attackAreaOffset = { x: 0, y: 0 },
     attackAreaWidth = 150,
     attackAreaHeight = 50,
+    movementSpeed = 1,
+    jumpForce = 16,
+    strength = 20,
   }) {
     super();
     this.direction = direction;
@@ -24,7 +27,9 @@ export default class Fighter extends Behavior {
     this.attackAreaHeight = attackAreaHeight;
     this.color = color;
     this.health = 100;
-    this.strength = 20;
+    this.strength = strength;
+    this.movementSpeed = movementSpeed;
+    this.jumpForce = jumpForce;
     this.state = { ...this.initialState };
     this.target = null;
   }

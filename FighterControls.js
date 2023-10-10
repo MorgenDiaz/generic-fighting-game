@@ -24,12 +24,12 @@ export default class FighterControls extends Behavior {
       this.activeActions.has(FighterControls.ACTIONS.left) &&
       this.lastAction === FighterControls.ACTIONS.left
     ) {
-      this.physics2D.velocity.x = -1;
+      this.physics2D.velocity.x = -this.fighter.movementSpeed;
     } else if (
       this.activeActions.has(FighterControls.ACTIONS.right) &&
       this.lastAction === FighterControls.ACTIONS.right
     ) {
-      this.physics2D.velocity.x = 1;
+      this.physics2D.velocity.x = this.fighter.movementSpeed;
     }
   }
 
@@ -42,8 +42,9 @@ export default class FighterControls extends Behavior {
 
       switch (event.key) {
         case this.controlMap.jump:
-          this.physics2D.velocity.y = -20;
-          this.testy = true;
+          if (this.physics2D.isObjectOnGround) {
+            this.physics2D.velocity.y = -this.fighter.jumpForce;
+          }
           break;
         case this.controlMap.attack:
           this.fighter.attack();
