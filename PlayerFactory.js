@@ -1,5 +1,4 @@
 import GameObject from "./GameObject.js";
-import Sprite from "./Sprite.js";
 import AnimationController from "./AnimationController.js";
 import Rectangle from "./Rectangle.js";
 import Physics2D from "./Physics2D.js";
@@ -19,7 +18,8 @@ export default class PlayerFactory {
 
   createPlayer1(initialPositionX = 0, initialPositionY = 0) {
     const player1Config = {
-      attackAreaOffset: { x: 90, y: -30 },
+      attackAreaOffset: { x: 70, y: -30 },
+      attackAreaWidth: 110,
       attackAreaHeight: 90,
       movementSpeed: 3,
     };
@@ -39,7 +39,13 @@ export default class PlayerFactory {
     heroAnimationController.addAnimationAction(
       "attack1",
       6,
-      fighter1.endAttack
+      fighter1.clearState
+    );
+
+    heroAnimationController.addAnimationAction(
+      "take_hit",
+      2,
+      fighter1.clearState
     );
 
     const player1Weapon = new Rectangle(
@@ -91,7 +97,7 @@ export default class PlayerFactory {
         fighter1,
         new FighterControls(PLAYER_1_CONTROL_MAP),
       ],
-      -100,
+      -125,
       -100
     );
 
@@ -101,8 +107,9 @@ export default class PlayerFactory {
   createPlayer2(initialPositionX = 0, initialPositionY = 0) {
     const player2Config = {
       direction: "left",
-      attackAreaOffset: { x: -140, y: -23 },
+      attackAreaOffset: { x: -145, y: -23 },
       attackAreaHeight: 90,
+      attackAreaWidth: 150,
       movementSpeed: 3,
       strength: 10,
     };
@@ -121,7 +128,13 @@ export default class PlayerFactory {
     kenjiAnimationController.addAnimationAction(
       "attack1",
       3,
-      fighter2.endAttack
+      fighter2.clearState
+    );
+
+    kenjiAnimationController.addAnimationAction(
+      "take_hit",
+      2,
+      fighter2.clearState
     );
 
     const player2Weapon = new Rectangle(
@@ -174,7 +187,7 @@ export default class PlayerFactory {
         fighter2,
         new FighterControls(PLAYER_2_CONTROL_MAP),
       ],
-      -190,
+      -205,
       -200
     );
 

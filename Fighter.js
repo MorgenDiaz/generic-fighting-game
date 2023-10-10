@@ -3,11 +3,17 @@ import Rectangle from "./Rectangle.js";
 import AnimationController from "./AnimationController.js";
 import Physics2D from "./Physics2D.js";
 export default class Fighter extends Behavior {
-  initialState = { isAttacking: false, isRunning: false, isJumping: false };
+  initialState = {
+    isAttacking: false,
+    isHurt: false,
+    isRunning: false,
+    isJumping: false,
+  };
   static state = {
     ATTACKING: "attacking",
     RUNNING: "running",
     JUMPING: "jumping",
+    HURT: "hurt",
   };
 
   constructor({
@@ -42,15 +48,16 @@ export default class Fighter extends Behavior {
     this.target = null;
   };
 
+  takeDamage = () => {
+    this.state.isHurt = true;
+  };
+
   dealDamage = () => {
     if (!this.target) return;
 
     const enemy = this.target.getComponent(Fighter);
+    enemy.takeDamage();
     enemy.health -= this.strength;
-  };
-
-  endAttack = () => {
-    this.state.isAttacking = false;
   };
 
   onAttachToGameObject = () => {
@@ -64,14 +71,21 @@ export default class Fighter extends Behavior {
     this.animationController.setState("idle");
   };
 
+  clearState = () => {
+    this.state = { ...this.initialState };
+  };
+
   updateState = (newState) => {
-    if (!this.state.isAttacking) {
-      this.state = { ...this.initialState };
+    if (!this.state.isAttacking && !this.state.isHurt) {
+      this.clearState();
       if (!newState) return;
 
       switch (newState) {
         case Fighter.state.ATTACKING:
           this.state.isAttacking = true;
+          break;
+        case Fighter.state.HURT:
+          this.state.isHurt = true;
           break;
         case Fighter.state.RUNNING:
           this.state.isRunning = true;
@@ -94,6 +108,8 @@ export default class Fighter extends Behavior {
       }
     } else if (this.state.isAttacking) {
       this.animationController.setState("attack1");
+    } else if (this.state.isHurt) {
+      this.animationController.setState("take_hit");
     } else {
       this.animationController.setState("idle");
     }
