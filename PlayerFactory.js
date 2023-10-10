@@ -19,7 +19,8 @@ export default class PlayerFactory {
 
   createPlayer1(initialPositionX = 0, initialPositionY = 0) {
     const player1Config = {
-      attackAreaOffset: { x: 50, y: 0 },
+      attackAreaOffset: { x: 90, y: -30 },
+      attackAreaHeight: 90,
       movementSpeed: 3,
     };
 
@@ -100,7 +101,8 @@ export default class PlayerFactory {
   createPlayer2(initialPositionX = 0, initialPositionY = 0) {
     const player2Config = {
       direction: "left",
-      attackAreaOffset: { x: -100, y: 0 },
+      attackAreaOffset: { x: -140, y: -23 },
+      attackAreaHeight: 90,
       movementSpeed: 3,
       strength: 10,
     };
