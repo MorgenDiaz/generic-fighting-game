@@ -1,4 +1,5 @@
 import Behavior from "./Behavior.js";
+import Sprite from "./Sprite.js";
 
 export default class AnimationController extends Behavior {
   constructor() {
@@ -29,5 +30,17 @@ export default class AnimationController extends Behavior {
 
   update(gameContext) {
     this.gameObject.sprite = this.sprites[this.state];
+  }
+
+  static create(animationConfiguration) {
+    const animationController = new AnimationController();
+
+    for (const [state, spriteConfig] of Object.entries(
+      animationConfiguration
+    )) {
+      animationController.addSpriteForState(state, new Sprite(spriteConfig));
+    }
+
+    return animationController;
   }
 }

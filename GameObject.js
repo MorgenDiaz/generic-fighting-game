@@ -1,5 +1,5 @@
 export default class GameObject {
-  bounderies = {};
+  boundaries = {};
 
   constructor(
     x,
@@ -43,8 +43,8 @@ export default class GameObject {
   update(gameContext) {
     this.behaviors.forEach((behavior) => behavior.update(gameContext));
 
-    this.bounderies.top = this.y;
-    this.bounderies.bottom = this.y + this.height;
+    this.boundaries.top = this.y;
+    this.boundaries.bottom = this.y + this.height;
 
     this.draw(gameContext);
   }
