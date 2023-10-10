@@ -20,6 +20,12 @@ const heroAnimationConfigurations = {
     frames: 3,
     scale: 2,
   },
+  down: {
+    ...SPRITE_DIMENSIONS,
+    imageSrc: "./assets/hero/Fall.png",
+    frames: 3,
+    scale: 2,
+  },
   attack1: {
     ...SPRITE_DIMENSIONS,
     imageSrc: "./assets/hero/Attack1.png",
@@ -52,7 +58,13 @@ const kenjiAnimationConfigurations = {
     scale: 3,
     animationSlowFactor: 15,
   },
-
+  down: {
+    ...SPRITE_DIMENSIONS,
+    imageSrc: "./assets/kenji/Fall.png",
+    frames: 2,
+    scale: 3,
+    animationSlowFactor: 15,
+  },
   attack1: {
     ...SPRITE_DIMENSIONS,
     imageSrc: "./assets/kenji/Attack1.png",

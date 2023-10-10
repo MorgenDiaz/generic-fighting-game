@@ -87,7 +87,11 @@ export default class Fighter extends Behavior {
     if (this.state.isRunning) {
       this.animationController.setState("run");
     } else if (this.state.isJumping) {
-      this.animationController.setState("up");
+      if (this.physics2D.velocity.y < 0) {
+        this.animationController.setState("up");
+      } else {
+        this.animationController.setState("down");
+      }
     } else if (this.state.isAttacking) {
       this.animationController.setState("attack1");
     } else {
