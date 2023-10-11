@@ -1,9 +1,10 @@
 import Rectangle from "./Rectangle.js";
 
 export default class CollisionCoordinator {
-  constructor() {
+  constructor(collisionLayerMap) {
     this.collidables = [];
     this.activeCollisions = new Set();
+    this.collisionLayerMap = collisionLayerMap;
   }
 
   registerCollidable = (collidable) => {
@@ -52,17 +53,24 @@ export default class CollisionCoordinator {
         );
 
         const collisionId = `${collidableId1}:${collidableId2}`;
-
         if (this.isRectangleCollision(collidable1, collidable2)) {
           if (
-            (collidable1.collisionLayer === "player1_weapon" &&
-              collidable2.collisionLayer === "player2") ||
-            (collidable1.collisionLayer === "player2_weapon" &&
-              collidable2.collisionLayer === "player1")
+            collidable1.collisionLayer in this.collisionLayerMap &&
+            this.collisionLayerMap[collidable1.collisionLayer].has(
+              collidable2.collisionLayer
+            )
           ) {
-            this.activeCollisions.add(collisionId);
             collidable1.emitCollisionEnterEvent(gameObject2);
+            this.activeCollisions.add(collisionId);
+          }
+          if (
+            collidable2.collisionLayer in this.collisionLayerMap &&
+            this.collisionLayerMap[collidable2.collisionLayer].has(
+              collidable1.collisionLayer
+            )
+          ) {
             collidable2.emitCollisionEnterEvent(gameObject1);
+            this.activeCollisions.add(collisionId);
           }
         } else {
           if (this.activeCollisions.has(collisionId)) {

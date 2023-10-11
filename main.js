@@ -7,7 +7,23 @@ import CollisionCoordinator from "./CollisionCoordinator.js";
 const GAME_CANVAS = document.querySelector(".game-canvas");
 const CONTEXT = GAME_CANVAS.getContext("2d");
 
-const COLLISION_COORDINATOR = new CollisionCoordinator();
+window.COLLISION_LAYERS = {
+  PLAYER_1_BODY: "player_1_body",
+  PLAYER_1_WEAPON: "player_1_weapon",
+  PLAYER_2_BODY: "player_2_body",
+  PLAYER_2_WEAPON: "player_2_weapon",
+};
+
+const COLLISION_LAYER_MAP = {
+  [window.COLLISION_LAYERS.PLAYER_1_WEAPON]: new Set().add(
+    window.COLLISION_LAYERS.PLAYER_2_BODY
+  ),
+  [window.COLLISION_LAYERS.PLAYER_2_WEAPON]: new Set().add(
+    window.COLLISION_LAYERS.PLAYER_1_BODY
+  ),
+};
+
+const COLLISION_COORDINATOR = new CollisionCoordinator(COLLISION_LAYER_MAP);
 
 const PLAYER_1_HEALTH_BAR = document.querySelector("#player-1-health-bar");
 const PLAYER_2_HEALTH_BAR = document.querySelector("#player-2-health-bar");

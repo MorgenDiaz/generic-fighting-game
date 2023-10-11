@@ -54,7 +54,7 @@ export default class PlayerFactory {
       0,
       0,
       true,
-      "player1_weapon",
+      window.COLLISION_LAYERS.PLAYER_1_WEAPON,
       this.registerCollidable
     );
     player1Weapon.name = "weapon";
@@ -65,7 +65,7 @@ export default class PlayerFactory {
       100,
       100,
       true,
-      "player1",
+      window.COLLISION_LAYERS.PLAYER_1_BODY,
       this.registerCollidable
     );
     player1Body.name = "body";
@@ -143,7 +143,7 @@ export default class PlayerFactory {
       0,
       0,
       true,
-      "player2_weapon",
+      window.COLLISION_LAYERS.PLAYER_2_WEAPON,
       this.registerCollidable
     );
     player2Weapon.name = "weapon";
@@ -154,7 +154,7 @@ export default class PlayerFactory {
       100,
       100,
       true,
-      "player2",
+      window.COLLISION_LAYERS.PLAYER_2_BODY,
       this.registerCollidable
     );
 
