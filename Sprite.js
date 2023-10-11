@@ -10,9 +10,12 @@ export default class Sprite {
     this.width = width * scale;
     this.height = height * scale;
     this.image = new Image();
+    this.image.onload = () => {
+      /*Important! if the singleFrameWidth is calculated before the image is loaded it will be set to 0!*/
+      this.singleFrameWidth = this.image.width / frames;
+    };
     this.image.src = imageSrc;
     this.frames = frames;
-    this.singleFrameWidth = this.image.width / frames;
     this.activeFrame = 0;
     this.frame = 0;
     this.animationSlowFactor = animationSlowFactor;

@@ -4,114 +4,116 @@ import Fighter from "./Fighter.js";
 import PlayerFactory from "./PlayerFactory.js";
 import CollisionCoordinator from "./CollisionCoordinator.js";
 
-const GAME_CANVAS = document.querySelector(".game-canvas");
-const CONTEXT = GAME_CANVAS.getContext("2d");
+window.onload = () => {
+  const GAME_CANVAS = document.querySelector(".game-canvas");
+  const CONTEXT = GAME_CANVAS.getContext("2d");
 
-window.COLLISION_LAYERS = {
-  PLAYER_1_BODY: "player_1_body",
-  PLAYER_1_WEAPON: "player_1_weapon",
-  PLAYER_2_BODY: "player_2_body",
-  PLAYER_2_WEAPON: "player_2_weapon",
-};
+  window.COLLISION_LAYERS = {
+    PLAYER_1_BODY: "player_1_body",
+    PLAYER_1_WEAPON: "player_1_weapon",
+    PLAYER_2_BODY: "player_2_body",
+    PLAYER_2_WEAPON: "player_2_weapon",
+  };
 
-const COLLISION_LAYER_MAP = {
-  [window.COLLISION_LAYERS.PLAYER_1_WEAPON]: new Set().add(
-    window.COLLISION_LAYERS.PLAYER_2_BODY
-  ),
-  [window.COLLISION_LAYERS.PLAYER_2_WEAPON]: new Set().add(
-    window.COLLISION_LAYERS.PLAYER_1_BODY
-  ),
-};
+  const COLLISION_LAYER_MAP = {
+    [window.COLLISION_LAYERS.PLAYER_1_WEAPON]: new Set().add(
+      window.COLLISION_LAYERS.PLAYER_2_BODY
+    ),
+    [window.COLLISION_LAYERS.PLAYER_2_WEAPON]: new Set().add(
+      window.COLLISION_LAYERS.PLAYER_1_BODY
+    ),
+  };
 
-const COLLISION_COORDINATOR = new CollisionCoordinator(COLLISION_LAYER_MAP);
+  const COLLISION_COORDINATOR = new CollisionCoordinator(COLLISION_LAYER_MAP);
 
-const PLAYER_1_HEALTH_BAR = document.querySelector("#player-1-health-bar");
-const PLAYER_2_HEALTH_BAR = document.querySelector("#player-2-health-bar");
-const TIMER_TEXT = document.querySelector("#time");
-const GAME_STATUS_TEXT = document.querySelector("#game-status");
-const GAME_MUSIC = document.getElementById("gameMusic");
+  const PLAYER_1_HEALTH_BAR = document.querySelector("#player-1-health-bar");
+  const PLAYER_2_HEALTH_BAR = document.querySelector("#player-2-health-bar");
+  const TIMER_TEXT = document.querySelector("#time");
+  const GAME_STATUS_TEXT = document.querySelector("#game-status");
+  const GAME_MUSIC = document.getElementById("gameMusic");
 
-GAME_CANVAS.width = 1024;
-GAME_CANVAS.height = 576;
+  GAME_CANVAS.width = 1024;
+  GAME_CANVAS.height = 576;
 
-function playMusic() {
-  GAME_MUSIC.play();
-}
-
-function pauseMusic() {
-  GAME_MUSIC.pause();
-}
-
-const BACKGROUND_SPRITE = new Sprite({
-  position: { x: 0, y: 0 },
-  width: GAME_CANVAS.width,
-  height: GAME_CANVAS.height,
-  imageSrc: "./assets/img/game_background_4.png",
-});
-
-const BACKGROUND = new GameObject(
-  0,
-  0,
-  GAME_CANVAS.width,
-  GAME_CANVAS.height,
-  BACKGROUND_SPRITE
-);
-
-function determineWinner(timerId) {
-  clearInterval(timerInterval);
-
-  if (player1.health === player2.health) {
-    GAME_STATUS_TEXT.textContent = "Tie!";
-  } else if (player1.health > player2.health) {
-    GAME_STATUS_TEXT.textContent = "Player1 Wins!";
-  } else {
-    GAME_STATUS_TEXT.textContent = "Player2 Wins";
+  function playMusic() {
+    GAME_MUSIC.play();
   }
 
-  GAME_STATUS_TEXT.style.display = "block";
-}
-
-let timerInterval = null;
-let timeSeconds = 60;
-
-timerInterval = setInterval(() => {
-  timeSeconds--;
-  TIMER_TEXT.textContent = timeSeconds;
-
-  if (timeSeconds === 0) {
-    determineWinner(timerInterval);
+  function pauseMusic() {
+    GAME_MUSIC.pause();
   }
-}, 1000);
 
-const playerFactory = new PlayerFactory({
-  registerCollidable: COLLISION_COORDINATOR.registerCollidable,
-  canvasWidth: GAME_CANVAS.width,
-  canvasHeight: GAME_CANVAS.height,
-});
+  const BACKGROUND_SPRITE = new Sprite({
+    position: { x: 0, y: 0 },
+    width: GAME_CANVAS.width,
+    height: GAME_CANVAS.height,
+    imageSrc: "./assets/img/game_background_4.png",
+  });
 
-const player1 = playerFactory.createPlayer1(200, 0);
-const player2 = playerFactory.createPlayer2(700, 0);
+  const BACKGROUND = new GameObject(
+    0,
+    0,
+    GAME_CANVAS.width,
+    GAME_CANVAS.height,
+    BACKGROUND_SPRITE
+  );
 
-function animate() {
-  CONTEXT.clearRect(0, 0, GAME_CANVAS.width, GAME_CANVAS.height);
-  BACKGROUND.update(CONTEXT);
+  function determineWinner(timerId) {
+    clearInterval(timerInterval);
 
-  player1.update(CONTEXT);
-  player2.update(CONTEXT);
+    if (player1.health === player2.health) {
+      GAME_STATUS_TEXT.textContent = "Tie!";
+    } else if (player1.health > player2.health) {
+      GAME_STATUS_TEXT.textContent = "Player1 Wins!";
+    } else {
+      GAME_STATUS_TEXT.textContent = "Player2 Wins";
+    }
 
-  COLLISION_COORDINATOR.detectCollisions();
+    GAME_STATUS_TEXT.style.display = "block";
+  }
 
-  const player1Health = player1.getComponent(Fighter).health;
-  const player2Health = player2.getComponent(Fighter).health;
+  let timerInterval = null;
+  let timeSeconds = 60;
 
-  PLAYER_1_HEALTH_BAR.style.width = `${player1Health}%`;
-  PLAYER_2_HEALTH_BAR.style.width = `${player2Health}%`;
+  timerInterval = setInterval(() => {
+    timeSeconds--;
+    TIMER_TEXT.textContent = timeSeconds;
 
-  window.requestAnimationFrame(animate);
-}
+    if (timeSeconds === 0) {
+      determineWinner(timerInterval);
+    }
+  }, 1000);
 
-document
-  .querySelector("#test-music-button")
-  .addEventListener("click", playMusic);
+  const playerFactory = new PlayerFactory({
+    registerCollidable: COLLISION_COORDINATOR.registerCollidable,
+    canvasWidth: GAME_CANVAS.width,
+    canvasHeight: GAME_CANVAS.height,
+  });
 
-animate();
+  const player1 = playerFactory.createPlayer1(200, 0);
+  const player2 = playerFactory.createPlayer2(700, 0);
+
+  function animate() {
+    CONTEXT.clearRect(0, 0, GAME_CANVAS.width, GAME_CANVAS.height);
+    BACKGROUND.update(CONTEXT);
+
+    player1.update(CONTEXT);
+    player2.update(CONTEXT);
+
+    COLLISION_COORDINATOR.detectCollisions();
+
+    const player1Health = player1.getComponent(Fighter).health;
+    const player2Health = player2.getComponent(Fighter).health;
+
+    PLAYER_1_HEALTH_BAR.style.width = `${player1Health}%`;
+    PLAYER_2_HEALTH_BAR.style.width = `${player2Health}%`;
+
+    window.requestAnimationFrame(animate);
+  }
+
+  document
+    .querySelector("#test-music-button")
+    .addEventListener("click", playMusic);
+
+  animate();
+};

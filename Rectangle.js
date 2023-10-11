@@ -1,5 +1,6 @@
 import Behavior from "./Behavior.js";
 import GameObject from "./GameObject.js";
+import { getUniqueId } from "./utils.js";
 
 export default class Rectangle extends Behavior {
   COLLISION_ENTER_OBSERVERS = [];
@@ -15,7 +16,7 @@ export default class Rectangle extends Behavior {
     registerCollidable
   ) {
     super();
-    this.id = Math.random().toString(36).slice(2, 9);
+    this.id = getUniqueId();
     this.x = x;
     this.y = y;
     this.width = width;
