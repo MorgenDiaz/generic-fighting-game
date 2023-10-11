@@ -8,6 +8,11 @@
   </head>
   <body>
     <main>
+      <audio id="gameMusic" loop>
+        <source src="./assets/audio/viking_feast.mp3" type="audio/mp3" />
+        Your browser does not support the audio element.
+      </audio>
+
       <div class="game-dash">
         <div class="health-guage left">
           <div class="health-bar" id="player-1-health-bar"></div>
@@ -20,6 +25,7 @@
       <div class="game-status-container"><h1 id="game-status">status</h1></div>
       <canvas class="game-canvas"></canvas>
     </main>
+    <button id="test-music-button">Test Music</button>
     <script type="module" src="./main.js"></script>
   </body>
 </html>

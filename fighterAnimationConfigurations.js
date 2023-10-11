@@ -3,38 +3,38 @@ const SPRITE_DIMENSIONS = { width: 175, height: 175 };
 const heroAnimationConfigurations = {
   idle: {
     ...SPRITE_DIMENSIONS,
-    imageSrc: "./assets/hero/Idle.png",
+    imageSrc: "./assets/img/hero/Idle.png",
     frames: 10,
     scale: 2,
   },
   run: {
     ...SPRITE_DIMENSIONS,
-    imageSrc: "./assets/hero/Run.png",
+    imageSrc: "./assets/img/hero/Run.png",
     frames: 8,
     scale: 2,
   },
 
   up: {
     ...SPRITE_DIMENSIONS,
-    imageSrc: "./assets/hero/Jump.png",
+    imageSrc: "./assets/img/hero/Jump.png",
     frames: 3,
     scale: 2,
   },
   down: {
     ...SPRITE_DIMENSIONS,
-    imageSrc: "./assets/hero/Fall.png",
+    imageSrc: "./assets/img/hero/Fall.png",
     frames: 3,
     scale: 2,
   },
   take_hit: {
     ...SPRITE_DIMENSIONS,
-    imageSrc: "./assets/hero/Take_Hit.png",
+    imageSrc: "./assets/img/hero/Take_Hit.png",
     frames: 3,
     scale: 2,
   },
   attack1: {
     ...SPRITE_DIMENSIONS,
-    imageSrc: "./assets/hero/Attack1.png",
+    imageSrc: "./assets/img/hero/Attack1.png",
     frames: 7,
     scale: 2,
   },
@@ -43,7 +43,7 @@ const heroAnimationConfigurations = {
 const kenjiAnimationConfigurations = {
   idle: {
     ...SPRITE_DIMENSIONS,
-    imageSrc: "./assets/kenji/Idle.png",
+    imageSrc: "./assets/img/kenji/Idle.png",
     frames: 4,
     scale: 3,
     animationSlowFactor: 15,
@@ -51,7 +51,7 @@ const kenjiAnimationConfigurations = {
 
   run: {
     ...SPRITE_DIMENSIONS,
-    imageSrc: "./assets/kenji/Run.png",
+    imageSrc: "./assets/img/kenji/Run.png",
     frames: 8,
     scale: 3,
     animationSlowFactor: 15,
@@ -59,28 +59,28 @@ const kenjiAnimationConfigurations = {
 
   up: {
     ...SPRITE_DIMENSIONS,
-    imageSrc: "./assets/kenji/Jump.png",
+    imageSrc: "./assets/img/kenji/Jump.png",
     frames: 2,
     scale: 3,
     animationSlowFactor: 15,
   },
   down: {
     ...SPRITE_DIMENSIONS,
-    imageSrc: "./assets/kenji/Fall.png",
+    imageSrc: "./assets/img/kenji/Fall.png",
     frames: 2,
     scale: 3,
     animationSlowFactor: 15,
   },
   take_hit: {
     ...SPRITE_DIMENSIONS,
-    imageSrc: "./assets/kenji/Take_hit.png",
+    imageSrc: "./assets/img/kenji/Take_hit.png",
     frames: 3,
     scale: 3,
     animationSlowFactor: 15,
   },
   attack1: {
     ...SPRITE_DIMENSIONS,
-    imageSrc: "./assets/kenji/Attack1.png",
+    imageSrc: "./assets/img/kenji/Attack1.png",
     frames: 4,
     scale: 3,
   },

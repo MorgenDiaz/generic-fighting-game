@@ -34,10 +34,6 @@ export default class GameObject {
         this.y + this.spriteOffsetY
       );
     }
-    gameContext.fillStyle = "orange";
-    gameContext.fillRect(this.x, this.y, 30, 30);
-    gameContext.fillRect(this.x, this.y + this.height, 30, 30);
-    gameContext.fillRect(this.x + this.width, this.y, 30, 30);
   }
 
   update(gameContext) {
