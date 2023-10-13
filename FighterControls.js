@@ -14,6 +14,9 @@ export default class FighterControls extends Behavior {
   onAttachToGameObject() {
     this.physics2D = this.gameObject.getComponent(Physics2D);
     this.fighter = this.gameObject.getComponent(Fighter);
+    this.fighter.registerOnDeathCallBack(() => {
+      this.unregisterKeyListeners();
+    });
     this.registerKeyListeners();
   }
 
@@ -33,29 +36,37 @@ export default class FighterControls extends Behavior {
     }
   }
 
-  registerKeyListeners() {
-    window.addEventListener("keydown", (event) => {
-      if (event.key in this.controlMap.navigation) {
-        this.activeActions.add(this.controlMap.navigation[event.key]);
-        this.lastAction = this.controlMap.navigation[event.key];
-      }
+  observeKeyDownEvents = (event) => {
+    if (event.key in this.controlMap.navigation) {
+      this.activeActions.add(this.controlMap.navigation[event.key]);
+      this.lastAction = this.controlMap.navigation[event.key];
+    }
 
-      switch (event.key) {
-        case this.controlMap.jump:
-          if (this.physics2D.isObjectOnGround) {
-            this.physics2D.velocity.y = -this.fighter.jumpForce;
-          }
-          break;
-        case this.controlMap.attack:
-          this.fighter.attack();
-          break;
-      }
-    });
+    switch (event.key) {
+      case this.controlMap.jump:
+        if (this.physics2D.isObjectOnGround) {
+          this.physics2D.velocity.y = -this.fighter.jumpForce;
+        }
+        break;
+      case this.controlMap.attack:
+        this.fighter.attack();
+        break;
+    }
+  };
 
-    window.addEventListener("keyup", (event) => {
-      if (event.key in this.controlMap.navigation) {
-        this.activeActions.delete(this.controlMap.navigation[event.key]);
-      }
-    });
-  }
+  observeKeyUpEvents = (event) => {
+    if (event.key in this.controlMap.navigation) {
+      this.activeActions.delete(this.controlMap.navigation[event.key]);
+    }
+  };
+
+  registerKeyListeners = () => {
+    window.addEventListener("keydown", this.observeKeyDownEvents);
+    window.addEventListener("keyup", this.observeKeyUpEvents);
+  };
+
+  unregisterKeyListeners = () => {
+    window.removeEventListener("keydown", this.observeKeyDownEvents);
+    window.removeEventListener("keyup", this.observeKeyUpEvents);
+  };
 }

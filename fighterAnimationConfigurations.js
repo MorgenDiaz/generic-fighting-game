@@ -38,6 +38,13 @@ const heroAnimationConfigurations = {
     frames: 7,
     scale: 2,
   },
+  death: {
+    ...SPRITE_DIMENSIONS,
+    imageSrc: "./assets/img/hero/Death.png",
+    frames: 11,
+    scale: 2,
+    animationShouldRepeat: false,
+  },
 };
 
 const kenjiAnimationConfigurations = {
@@ -83,6 +90,13 @@ const kenjiAnimationConfigurations = {
     imageSrc: "./assets/img/kenji/Attack1.png",
     frames: 4,
     scale: 3,
+  },
+  death: {
+    ...SPRITE_DIMENSIONS,
+    imageSrc: "./assets/img/kenji/Death.png",
+    frames: 7,
+    scale: 3,
+    animationShouldRepeat: false,
   },
 };
 

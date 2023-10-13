@@ -58,15 +58,35 @@ window.onload = () => {
     BACKGROUND_SPRITE
   );
 
-  function determineWinner(timerId) {
-    clearInterval(timerInterval);
+  const playerFactory = new PlayerFactory({
+    registerCollidable: COLLISION_COORDINATOR.registerCollidable,
+    canvasWidth: GAME_CANVAS.width,
+    canvasHeight: GAME_CANVAS.height,
+  });
 
-    if (player1.health === player2.health) {
-      GAME_STATUS_TEXT.textContent = "Tie!";
-    } else if (player1.health > player2.health) {
-      GAME_STATUS_TEXT.textContent = "Player1 Wins!";
-    } else {
-      GAME_STATUS_TEXT.textContent = "Player2 Wins";
+  const player1 = playerFactory.createPlayer1(200, 0);
+  const player2 = playerFactory.createPlayer2(700, 0);
+
+  player1.getComponent(Fighter).registerOnDeathCallBack(() => {
+    showGameResult(timerInterval, player2);
+  });
+
+  player2.getComponent(Fighter).registerOnDeathCallBack(() => {
+    showGameResult(timerInterval, player1);
+  });
+
+  function showGameResult(timerId, victor) {
+    clearInterval(timerId);
+
+    switch (victor) {
+      case player1:
+        GAME_STATUS_TEXT.textContent = "Player1 Wins!";
+        break;
+      case player2:
+        GAME_STATUS_TEXT.textContent = "Player2 Wins";
+        break;
+      default:
+        GAME_STATUS_TEXT.textContent = "Tie!";
     }
 
     GAME_STATUS_TEXT.style.display = "block";
@@ -80,18 +100,9 @@ window.onload = () => {
     TIMER_TEXT.textContent = timeSeconds;
 
     if (timeSeconds === 0) {
-      determineWinner(timerInterval);
+      showGameResult(timerInterval);
     }
   }, 1000);
-
-  const playerFactory = new PlayerFactory({
-    registerCollidable: COLLISION_COORDINATOR.registerCollidable,
-    canvasWidth: GAME_CANVAS.width,
-    canvasHeight: GAME_CANVAS.height,
-  });
-
-  const player1 = playerFactory.createPlayer1(200, 0);
-  const player2 = playerFactory.createPlayer2(700, 0);
 
   function animate() {
     CONTEXT.clearRect(0, 0, GAME_CANVAS.width, GAME_CANVAS.height);

@@ -6,6 +6,7 @@ export default class Sprite {
     frames = 1,
     scale = 1,
     animationSlowFactor = 6,
+    animationShouldRepeat = true,
   }) {
     this.width = width * scale;
     this.height = height * scale;
@@ -19,6 +20,8 @@ export default class Sprite {
     this.activeFrame = 0;
     this.frame = 0;
     this.animationSlowFactor = animationSlowFactor;
+    this.animationShouldRepeat = animationShouldRepeat;
+    this.hasCompletedAnimation = false;
     this.frameActions = [];
   }
 
@@ -37,6 +40,9 @@ export default class Sprite {
 
     if (this.frames > 1) {
       if (this.frame % this.animationSlowFactor === 0) {
+        if (this.activeFrame === frames - 1 && this.hasCompletedAnimation)
+          return;
+
         for (const frameAction of this.frameActions) {
           if (frameAction.frame === this.activeFrame) {
             frameAction.callback();
@@ -44,7 +50,17 @@ export default class Sprite {
         }
 
         this.activeFrame++;
-        this.activeFrame = this.activeFrame % this.frames;
+
+        if (this.activeFrame === this.frames) {
+          if (this.animationShouldRepeat) {
+            this.activeFrame = 0;
+          } else {
+            this.activeFrame = this.frames - 1;
+          }
+
+          this.hasCompletedAnimation = true;
+        }
+
         this.frame = 0;
       }
 

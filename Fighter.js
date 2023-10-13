@@ -8,12 +8,14 @@ export default class Fighter extends Behavior {
     isHurt: false,
     isRunning: false,
     isJumping: false,
+    isDead: false,
   };
   static state = {
     ATTACKING: "attacking",
     RUNNING: "running",
     JUMPING: "jumping",
     HURT: "hurt",
+    DEAD: "dead",
   };
 
   constructor({
@@ -38,7 +40,18 @@ export default class Fighter extends Behavior {
     this.jumpForce = jumpForce;
     this.state = { ...this.initialState };
     this.target = null;
+    this.onDeathCallBacks = [];
   }
+
+  registerOnDeathCallBack = (callback) => {
+    this.onDeathCallBacks.push(callback);
+  };
+
+  notifyOnDeathCallbacks = () => {
+    this.onDeathCallBacks.forEach((callback) => {
+      callback();
+    });
+  };
 
   setTarget = (collisionObject) => {
     this.target = collisionObject;
@@ -76,7 +89,7 @@ export default class Fighter extends Behavior {
   };
 
   updateState = (newState) => {
-    if (!this.state.isAttacking && !this.state.isHurt) {
+    if (!this.state.isAttacking && !this.state.isHurt && !this.state.isDead) {
       this.clearState();
       if (!newState) return;
 
@@ -92,6 +105,9 @@ export default class Fighter extends Behavior {
           break;
         case Fighter.state.JUMPING:
           this.state.isJumping = true;
+          break;
+        case Fighter.state.DEAD:
+          this.state.isDead = true;
           break;
       }
     }
@@ -110,12 +126,21 @@ export default class Fighter extends Behavior {
       this.animationController.setState("attack1");
     } else if (this.state.isHurt) {
       this.animationController.setState("take_hit");
+    } else if (this.state.isDead) {
+      this.animationController.setState("death");
     } else {
       this.animationController.setState("idle");
     }
   };
 
   update = (canvasContext) => {
+    if (this.state.isDead) return;
+
+    if (this.health <= 0) {
+      this.updateState(Fighter.state.DEAD);
+      this.notifyOnDeathCallbacks();
+    }
+
     if (this.physics2D.isObjectOnGround) {
       const horizontalVelocity = this.physics2D.velocity.x;
       if (

@@ -26,7 +26,16 @@ export default class GameObject {
     });
   }
 
+  debug(gameContext) {
+    if (window.debug) {
+      gameContext.strokeStyle = "blue";
+      gameContext.strokeRect(this.x, this.y, this.width, this.height);
+    }
+  }
+
   draw(gameContext) {
+    this.debug(gameContext);
+
     if (this.sprite) {
       this.sprite.draw(
         gameContext,
