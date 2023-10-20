@@ -88,7 +88,7 @@ export default class Fighter extends Behavior {
     this.state = { ...this.initialState };
   };
 
-  updateState = (newState) => {
+  setState = (newState) => {
     if (!this.state.isAttacking && !this.state.isHurt && !this.state.isDead) {
       this.clearState();
       if (!newState) return;
@@ -110,6 +110,27 @@ export default class Fighter extends Behavior {
           this.state.isDead = true;
           break;
       }
+    }
+  };
+
+  updateState = () => {
+    if (this.health <= 0) {
+      this.setState(Fighter.state.DEAD);
+      this.notifyOnDeathCallbacks();
+    }
+
+    if (this.physics2D.isObjectOnGround) {
+      const horizontalVelocity = this.physics2D.velocity.x;
+      if (
+        (this.direction === "right" && horizontalVelocity > 0) ||
+        (this.direction === "left" && horizontalVelocity < 0)
+      ) {
+        this.setState(Fighter.state.RUNNING);
+      } else {
+        this.setState();
+      }
+    } else {
+      this.setState(Fighter.state.JUMPING);
     }
   };
 
@@ -136,25 +157,7 @@ export default class Fighter extends Behavior {
   update = (canvasContext) => {
     if (this.state.isDead) return;
 
-    if (this.health <= 0) {
-      this.updateState(Fighter.state.DEAD);
-      this.notifyOnDeathCallbacks();
-    }
-
-    if (this.physics2D.isObjectOnGround) {
-      const horizontalVelocity = this.physics2D.velocity.x;
-      if (
-        (this.direction === "right" && horizontalVelocity > 0) ||
-        (this.direction === "left" && horizontalVelocity < 0)
-      ) {
-        this.updateState(Fighter.state.RUNNING);
-      } else {
-        this.updateState();
-      }
-    } else {
-      this.updateState(Fighter.state.JUMPING);
-    }
-
+    this.updateState();
     this.updateAnimation();
 
     this.attackArea.x = this.gameObject.x + this.attackAreaOffset.x;
@@ -167,7 +170,6 @@ export default class Fighter extends Behavior {
   };
 
   attack = () => {
-    this.updateState(Fighter.state.ATTACKING);
-    window.debug = true;
+    this.setState(Fighter.state.ATTACKING);
   };
 }

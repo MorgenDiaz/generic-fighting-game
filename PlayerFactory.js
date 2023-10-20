@@ -16,7 +16,7 @@ export default class PlayerFactory {
     this.canvasHeight = canvasHeight;
   }
 
-  createPlayer1(initialPositionX = 0, initialPositionY = 0) {
+  createPlayer1(initialPositionX = 0, initialPositionY = 0, audioComponent) {
     const player1Config = {
       attackAreaOffset: { x: 70, y: -30 },
       attackAreaWidth: 110,
@@ -35,6 +35,13 @@ export default class PlayerFactory {
       3,
       fighter1.dealDamage
     );
+
+    heroAnimationController.addAnimationAction("attack1", 3, () => {
+      audioComponent.src = "./assets/audio/hero/punch-2-166695.mp3";
+      audioComponent.load();
+      audioComponent.play();
+      console.log("yep");
+    });
 
     heroAnimationController.addAnimationAction(
       "attack1",
@@ -104,7 +111,7 @@ export default class PlayerFactory {
     return player1;
   }
 
-  createPlayer2(initialPositionX = 0, initialPositionY = 0) {
+  createPlayer2(initialPositionX = 0, initialPositionY = 0, audioComponent) {
     const player2Config = {
       direction: "left",
       attackAreaOffset: { x: -145, y: -23 },
@@ -125,6 +132,13 @@ export default class PlayerFactory {
       1,
       fighter2.dealDamage
     );
+
+    kenjiAnimationController.addAnimationAction("attack1", 1, () => {
+      audioComponent.src = "./assets/audio/kenji/sword-sound-2-36274.mp3";
+      audioComponent.load();
+      audioComponent.play();
+    });
+
     kenjiAnimationController.addAnimationAction(
       "attack1",
       3,

@@ -30,7 +30,9 @@ window.onload = () => {
   const PLAYER_2_HEALTH_BAR = document.querySelector("#player-2-health-bar");
   const TIMER_TEXT = document.querySelector("#time");
   const GAME_STATUS_TEXT = document.querySelector("#game-status");
-  const GAME_MUSIC = document.getElementById("gameMusic");
+  const GAME_MUSIC = document.querySelector("#music-audio");
+  const PLAYER_1_AUDIO = document.querySelector("#player-1-audio");
+  const PLAYER_2_AUDIO = document.querySelector("#player-2-audio");
 
   GAME_CANVAS.width = 1024;
   GAME_CANVAS.height = 576;
@@ -64,8 +66,8 @@ window.onload = () => {
     canvasHeight: GAME_CANVAS.height,
   });
 
-  const player1 = playerFactory.createPlayer1(200, 0);
-  const player2 = playerFactory.createPlayer2(700, 0);
+  const player1 = playerFactory.createPlayer1(200, 0, PLAYER_1_AUDIO);
+  const player2 = playerFactory.createPlayer2(700, 0, PLAYER_2_AUDIO);
 
   player1.getComponent(Fighter).registerOnDeathCallBack(() => {
     showGameResult(timerInterval, player2);
